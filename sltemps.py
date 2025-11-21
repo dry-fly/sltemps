@@ -4,9 +4,10 @@ import sqlite3
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-options = Options()
+#options = Options()
 #options.headless = True
 #options.add_argument("--window-size=1920,1200")
+options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
 
 driver = webdriver.Chrome(options=options)
@@ -26,7 +27,19 @@ create_table()
 
 # Get Base Temp
 driver.get('https://www.weatherlink.com/map/data/station/c0d9838e-95c4-4b39-bfd2-c7bd7c2f550b')
-weatherData = re.findall(r'.+\<pre[^>]+\>(\{\"sStation.+})', driver.page_source)
+#print(driver.page_source)
+weatherData = re.findall(r'.+\<pre\>(\{\"sStation.+})', driver.page_source)
+#weatherData = re.findall(r'.+\<pre\>(\{.+})\<\/pre\>', driver.page_source)
+weatherDataDict = json.loads(weatherData[0])
+
+#for key in weatherDataDict:
+#  print(key, ":", weatherDataDict[key]) 
+# Add Base Temp to DB
+data_entry(weatherDataDict)
+
+# Get Bucksaw Temp
+driver.get('https://www.weatherlink.com/map/data/station/c5c31f02-675f-4e21-be83-fbf50e323763')
+weatherData = re.findall(r'.+\<pre\>(\{\"sStation.+})', driver.page_source)
 weatherDataDict = json.loads(weatherData[0])
 
 #for key in weatherDataDict:
@@ -36,7 +49,7 @@ data_entry(weatherDataDict)
 
 # Get Summit Temp
 driver.get('https://www.weatherlink.com/map/data/station/4e059d3a-930e-40f3-964d-696297904466')
-weatherData = re.findall(r'.+\<pre[^>]+\>(\{\"sStation.+})', driver.page_source)
+weatherData = re.findall(r'.+\<pre\>(\{\"sStation.+})', driver.page_source)
 weatherDataDict = json.loads(weatherData[0])
 
 #for key in weatherDataDict:
